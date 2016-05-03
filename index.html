@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="content-type"
+        content="text/html; charset=UTF-8">
+    <title>sample</title>
+    <style>
+    body { font-size:12pt; color:#006666; }
+    h1 { font-size:18pt; background-color:#AAFFFF; }
+    pre { background-color:#EEEEEE; }
+    </style>
+</head>
+ 
+ 
+<body>
+    <canvas id="canvas" width="800" height="500"></canvas>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+    var socket = io();
+
+
+    var canvas = document.getElementById("canvas");
+    //キャンバスの背景を設定
+    var ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.fillStyle = "lightgrey";
+    ctx.fillRect(0, 0, 800, 500);
+    var penSize = 7;
+    var penColor = "black";
+    var penAlpha = 1.0;
+    var mouseX = "";
+    var mouseY = "";
+    //canvasにイベントを紐付ける
+    canvas.addEventListener("mousemove", onMove, false);
+    canvas.addEventListener("mousedown", onClick, false);
+    canvas.addEventListener("mouseup", drawEnd, false);
+    canvas.addEventListener("mouseout", drawEnd, false);
+    function onMove(e){
+        if(e.buttons === 1 || e.witch === 1){//クリックしている状態
+            //e.targetはcanvas
+            //getBoundingClientRect()によってcanvasの座標を取得
+            var rect = e.target.getBoundingClientRect();
+            //マウスの位置から右と下にずれている分引く
+            var X = Math.floor(e.clientX - rect.left);
+            var Y = Math.floor(e.clientY - rect.top);
+            draw(X, Y);
+        };
+    };
+    function onClick(e){
+        if(e.buttons === 0){//クリックしてない状態
+            var rect = e.target.getBoundingClientRect();
+            var X = Math.floor(e.clientX - rect.left);
+            var Y = Math.floor(e.clientY - rect.top);
+            draw(X, Y);
+        };
+    };
+    function draw(X, Y){
+        ctx.beginPath();
+        ctx.globalAlpha = penAlpha;
+        if(mouseX === ""){
+            ctx.moveTo(X, Y);
+        }else {
+            ctx.moveTo(mouseX, mouseY);
+        };
+        ctx.lineTo(X, Y);
+        ctx.lineCap = "round";
+        ctx.lineWidth = penSize * 2;
+        ctx.strokeStyle = penColor;
+        ctx.stroke();
+        mouseX = X;
+        mouseY = Y;
+    };
+    function drawEnd(){
+        mouseX = "";
+        mouseY = "";
+    };
+</script>
+
+</html>
