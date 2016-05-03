@@ -25,11 +25,11 @@
     var penColor = "black";
     var penAlpha = 1.0;
 
-    var pos = {};
-    pos.oldX = "";
-    pos.oldY = "";
-    pos.currentX = "";
-    pos.currentY = "";
+    var myPos = {};
+    myPos.oldX = "";
+    myPos.oldY = "";
+    myPos.currentX = "";
+    myPos.currentY = "";
 
     //canvasにイベントを紐付ける
     canvas.addEventListener("mousemove", onMove, false);
@@ -59,28 +59,27 @@
     };
 
     function draw(X, Y){
-      pos.currentX = X;
-      pos.currentY = Y;
+      myPos.currentX = X;
+      myPos.currentY = Y;
 
-      socket.emit("send drawing", pos);
+      socket.emit("draw", myPos);
 
-      pos.oldX = X;
-      pos.oldY = Y;
+      myPos.oldX = X;
+      myPos.oldY = Y;
     };
 
-    socket.on('receive drawing', function(pos){
-      receiveDrawing(pos);
+    socket.on('draw', function(myPos){
+      receiveDrawing(myPos);
     });
-    function receiveDrawing(pos){
-      console.log(pos);
+    function receiveDrawing(recPos){
       ctx.beginPath();
       ctx.globalAlpha = penAlpha;
-      if(pos.oldX === ""){
-          ctx.moveTo(pos.currentX, pos.currentY);
+      if(recPos.oldX === ""){
+          ctx.moveTo(recPos.currentX, recPos.currentY);
       }else {
-          ctx.moveTo(pos.oldX, pos.oldY);
+          ctx.moveTo(recPos.oldX, recPos.oldY);
       };
-      ctx.lineTo(pos.currentX, pos.currentY);
+      ctx.lineTo(recPos.currentX, recPos.currentY);
       ctx.lineCap = "round";
       ctx.lineWidth = penSize * 2;
       ctx.strokeStyle = penColor;
@@ -88,8 +87,8 @@
     }
 
     function drawEnd(){
-        pos.oldX = "";
-        pos.oldY = "";
+        myPos.oldX = "";
+        myPos.oldY = "";
     };
 </script>
 

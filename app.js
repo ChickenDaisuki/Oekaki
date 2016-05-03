@@ -12,8 +12,8 @@ io.on('connection', function(socket){
     console.log('user disconnected');
   });
 
-  socket.on('send drawing', function(pos){
-  	io.emit('receive drawing', pos);
+  socket.on('draw', function(pos){
+  	io.emit('draw', pos);
   });
 });
 
